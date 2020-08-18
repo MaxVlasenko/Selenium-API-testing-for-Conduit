@@ -1,0 +1,362 @@
+{
+	"info": {
+		"_postman_id": "fb83294c-1a66-44ef-a9a1-66f7be9fbc04",
+		"name": "Conduit_API_TEST",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Registration",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "113359e7-7723-41e7-b3a6-fbad479a7dd3",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test all response keys\", function(){\r",
+							"   pm.response.to.have.jsonBody('user.id')\r",
+							"       .and.to.have.jsonBody('user.email')\r",
+							"       .and.to.have.jsonBody('user.createdAt')\r",
+							"       .and.to.have.jsonBody('user.updatedAt')\r",
+							"       .and.to.have.jsonBody('user.username')\r",
+							"       .and.to.have.jsonBody('user.bio')\r",
+							"       .and.to.have.jsonBody('user.image')\r",
+							"       .and.to.have.jsonBody('user.token')\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n  \"user\": {\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"qwerty123\",\r\n    \"username\": \"{{$randomUserName}}\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1cb283e3-c0b8-4425-91ed-0804568dc028",
+						"exec": [
+							"pm.test(\"Test email data\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.user.email).to.eql(pm.environment.get('email'))\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"token\", pm.response.json().user.token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\":{\r\n        \"email\": \"{{email}}\", \r\n        \"password\":  \"{{password}}\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ADD Article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "56d541c6-5be6-4ac7-8435-827fe39908cc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('Ger')\r",
+							"   pm.expect(jsonData.article.body).to.eql('Berlin is a capital of Germany')\r",
+							"   pm.expect(jsonData.article.description).to.eql('Ger')\r",
+							"   pm.expect(jsonData.article.author.username).to.eql('111222111')\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"slug\", pm.response.json().article.slug);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article\": {\r\n        \"title\": \"Ger\",\r\n        \"description\": \"Ger\",\r\n        \"body\": \"Berlin is a capital of Germany\",\r\n        \"tagList\": \"\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/articles",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3b97f1ee-57db-49b4-ae4c-1ae293221f6a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('Ger')\r",
+							"   pm.expect(jsonData.article.body).to.eql('Germany')\r",
+							"   pm.expect(jsonData.article.description).to.eql('Ger')\r",
+							"   pm.expect(jsonData.article.author.username).to.eql('111222111')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article\": {\r\n        \"body\": \"Germany\",\r\n        \"description\": \"Ger\",\r\n        \"tagList\": [],\r\n        \"title\": \"Ger\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e426363e-db3c-4dd5-8900-112ff02460d4",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.comment.body).to.eql('hello')\r",
+							"   pm.expect(jsonData.comment.author.username).to.eql('111222111')\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"id\", pm.response.json().comment.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"comment\": {\"body\": \"hello\"}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conduit.productionready.io/api/articles/{{slug}}/comments",
+					"protocol": "https",
+					"host": [
+						"conduit",
+						"productionready",
+						"io"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "del comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "337d7923-89b2-4585-8089-b0ba1c47a140",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}/comments/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"comments",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Del article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "322c95b0-3f8a-4bf0-9a5b-c2625a4243f0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
